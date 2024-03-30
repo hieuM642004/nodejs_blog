@@ -14,8 +14,10 @@ import FormBook from "../admin/Actions/Book/FormBook"
 import ReadBooks from "../admin/Actions/Book/ReadBooks"
 import FormGenres from "../admin/Actions/Genres/FormGenres"
 import ReadGenres from "../admin/Actions/Genres/ReadGenres"
+import ReadPremiumUser from "../admin/Actions/PremiumUsers/PremiumUsers"
 import FormUser from "../admin/Actions/User/FormUser"
 import ReadUsers from "../admin/Actions/User/ReadUser"
+
 //Admin routes
 import Dashboard from "../admin/Components/Dashboard/Dashboard"
 
@@ -45,6 +47,7 @@ const adminRoutes=[
 {path:'/admin/user',component:ReadUsers},
 {path:'/admin/user/add-user',component:FormUser},
 {path:'/admin/user/edit-user/:id',component:FormUser},
+{path:'/admin/premium-users',component:ReadPremiumUser},
 
 ]
 

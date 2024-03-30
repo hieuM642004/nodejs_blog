@@ -1,11 +1,9 @@
-
 const multer = require("multer");
 const Posts = require("../models/Posts");
 
-
-class postsService  {
+class postsService {
   //ADD POSTS
-static async addPosts  (req, res)  {
+  static async addPosts(req, res) {
     try {
       const newPosts = new Posts(req.body);
       const savedPosts = await newPosts.save();
@@ -16,7 +14,7 @@ static async addPosts  (req, res)  {
   }
 
   //GET ALL POSTSS
-static async getAllPostss  (req, res)  {
+  static async getAllPostss(req, res) {
     try {
       const postss = await Posts.find();
       res.status(200).json(postss);
@@ -26,7 +24,7 @@ static async getAllPostss  (req, res)  {
   }
 
   //GET AN POSTS
-static async getAnPosts  (req, res)  {
+  static async getAnPosts(req, res) {
     try {
       const posts = await Posts.findById(req.params.id);
       res.status(200).json(posts);
@@ -36,7 +34,7 @@ static async getAnPosts  (req, res)  {
   }
 
   //UPDATE POSTS
-static async  updatePosts (req, res)  {
+  static async updatePosts(req, res) {
     try {
       const posts = await Posts.findById(req.params.id);
       await posts.updateOne({ $set: req.body });
@@ -47,7 +45,7 @@ static async  updatePosts (req, res)  {
   }
 
   //DELETE POSTS
-static async deletePosts  (req, res)  {
+  static async deletePosts(req, res) {
     try {
       await Posts.findByIdAndDelete(req.params.id);
       res.status(200).json("Deleted successfully!");
@@ -55,6 +53,6 @@ static async deletePosts  (req, res)  {
       res.status(500).json(err);
     }
   }
-};
+}
 
 module.exports = postsService;

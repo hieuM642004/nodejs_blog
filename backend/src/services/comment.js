@@ -1,59 +1,49 @@
 const Comment = require("../models/Comment");
 
-
-
 class commentService {
-  //ADD COMMENt
-static async addComment  (req, res)  {
+  // ADD COMMENT
+  static async addComment(data) {
     try {
-      const newComment = new Comment(req.body);
+      const newComment = new Comment(data);
       const savedComment = await newComment.save();
-      res.status(200).json(savedComment);
+      return savedComment;
     } catch (err) {
-      res.status(500).json(err); //HTTP REQUEST CODE
+      console.error('Error adding comment:', err);
+      throw new Error('Failed to add comment');
     }
   }
 
-  //GET ALL GENRESS
-static async getAllComments  (req, res)  {
+  // GET ALL COMMENTS
+  static async getAllComments() {
     try {
       const comments = await Comment.find();
-      res.status(200).json(comments);
+      return comments;
     } catch (err) {
-      res.status(500).json(err);
+      console.error('Error getting all comments:', err);
+      throw new Error('Failed to retrieve comments');
     }
   }
+  static async editComment(data) {
+    try {
+        const { commentId, text } = data;
+        const editedComment = await Comment.findByIdAndUpdate(commentId, { text: text,edited:true }); 
+        return editedComment;
+    } catch (err) {
+        console.error('Error editing comment:', err);
+        throw new Error('Failed to edit comment');
+    }
+}
+  static async deleteComment(data) {
+    try {
+        const { commentId} = data;
+        const deleteComment = await Comment.findByIdAndDelete(commentId); 
+        return deleteComment;
+    } catch (err) {
+        console.error('Error editing comment:', err);
+        throw new Error('Failed to edit comment');
+    }
+}
 
-//   //GET AN GENRES
-//   getAnGenres: async (req, res) => {
-//     try {
-//       const genres = await Genres.findById(req.params.id);
-//       res.status(200).json(genres);
-//     } catch (err) {
-//       res.status(500).json(err);
-//     }
-//   },
-
-//   //UPDATE GENRES
-//   updateGenres: async (req, res) => {
-//     try {
-//       const genres = await Genres.findById(req.params.id);
-//       await genres.updateOne({ $set: req.body });
-//       res.status(200).json("Updated successfully!");
-//     } catch (err) {
-//       res.status(500).json(err);
-//     }
-//   },
-
-//   //DELETE GENRES
-//   deleteGenres: async (req, res) => {
-//     try {
-//       await Genres.findByIdAndDelete(req.params.id);
-//       res.status(200).json("Deleted successfully!");
-//     } catch (err) {
-//       res.status(500).json(err);
-//     }
-//   },
-};
+}
 
 module.exports = commentService;

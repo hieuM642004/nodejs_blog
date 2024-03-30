@@ -59,7 +59,7 @@ const SearchBooks = ({ onSearch }) => {
 	};
 	return (
 		<div ref={inputRef}>
-			<form className="mr-5 my-3 relative">
+			<form className="mr-5 my-3 relative z-50">
 				<label
 					htmlFor="default-search"
 					className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"

@@ -1,4 +1,5 @@
 const Premium = require("../models/Premium");
+const User = require("../models/User");
 const moment = require("moment-timezone");
 const premiumService = {
   addPremium: async (req, res) => {
@@ -22,16 +23,25 @@ const premiumService = {
       const premiumPackage = new Premium({
         userId,
         money,
-        package:packageType,
+        package: packageType,
         expiryDate,
       });
       const savedpremiumPackage = await premiumPackage.save();
-
+await User.findByIdAndUpdate(userId,{premium:true});
       return res.status(200).json(savedpremiumPackage);
     } catch (error) {
       return res.status(500).json(error);
     }
   },
+  getAllPremium:async(req,res)=>{
+    try {
+      const packagePremium = await Premium.find();
+      res.status(200).json(packagePremium);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
+  ,
   updatePremium: async (req, res) => {
     try {
     } catch (error) {
@@ -139,9 +149,9 @@ const premiumService = {
 
   //   var querystring = require('qs');
   //   var signData = querystring.stringify(vnp_Params, { encode: false });
-  //   var crypto = require("crypto");     
+  //   var crypto = require("crypto");
   //   var hmac = crypto.createHmac("sha512", secretKey);
-  //   var signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");     
+  //   var signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex");
 
   //   if(secureHash === signed){
 

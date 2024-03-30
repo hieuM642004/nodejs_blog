@@ -1,8 +1,8 @@
 const User = require("../models/User");
 
-class userService  {
+class userService {
   //GET ALL USER
- async getAllUsers   (req, res)  {
+  static async getAllUsers(req, res) {
     try {
       const user = await User.find();
       res.status(200).json(user);
@@ -11,7 +11,7 @@ class userService  {
     }
   }
   //GET A USER
- async getAUsers   (req, res)  {
+  static async getAUsers(req, res) {
     try {
       const user = await User.findById(req.params.id);
       res.status(200).json(user);
@@ -19,9 +19,19 @@ class userService  {
       res.status(500).json(err);
     }
   }
+  //EDIT USER
+  static async editUser(req, res) {
+    try {
+      const user = await User.findById(req.params.id);
+      await user.updateOne({ $set: req.body });
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  }
 
   //DELETE A USER
- async deleteUser   (req, res)  {
+  static async deleteUser(req, res) {
     try {
       await User.findByIdAndDelete(req.params.id);
       res.status(200).json("User deleted");
@@ -30,25 +40,29 @@ class userService  {
     }
   }
   //add hasFollow
- async addFollow (req,res){
+  static async addFollow(req, res) {
     try {
-      const idUser=req.params.id;
-      await User.findByIdAndUpdate(idUser,{$push:{hasFollow:req.body.hasFollow}})
+      const idUser = req.params.id;
+      await User.findByIdAndUpdate(idUser, {
+        $push: { hasFollow: req.body.hasFollow },
+      });
       res.status(200).json("User has follow");
     } catch (err) {
       res.status(500).json(err);
     }
   }
   //remove hasFollow
- async unFollow (req,res){
+  static async unFollow(req, res) {
     try {
-      const idUser=req.params.id;
-      await User.findByIdAndUpdate(idUser,{$pull:{hasFollow:req.body.hasFollow}})
+      const idUser = req.params.id;
+      await User.findByIdAndUpdate(idUser, {
+        $pull: { hasFollow: req.body.hasFollow },
+      });
       res.status(200).json("User has unfollow");
     } catch (err) {
       res.status(500).json(err);
     }
   }
-};
+}
 
 module.exports = userService;

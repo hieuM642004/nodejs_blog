@@ -35,7 +35,7 @@ function Author() {
 			const userId = dataUsser[0];
 			if (userId) {
 				if (follow) {
-					await axios.delete(`/user/${userId}`, {
+					await axios.delete(`/user/${userId}/unfollow`, {
 						data: {
 							hasFollow: id,
 						},

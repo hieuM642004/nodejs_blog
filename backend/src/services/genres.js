@@ -1,10 +1,9 @@
 const Genres = require("../models/Genres");
 const multer = require("multer");
 
-
-class genresService  {
+class genresService {
   //ADD GENRES
-static async addGenres  (req, res)  {
+  static async addGenres(req, res) {
     try {
       const newGenres = new Genres(req.body);
       const savedGenres = await newGenres.save();
@@ -15,7 +14,7 @@ static async addGenres  (req, res)  {
   }
 
   //GET ALL GENRESS
-static async  getAllGenress (req, res)  {
+  static async getAllGenress(req, res) {
     try {
       const genress = await Genres.find();
       res.status(200).json(genress);
@@ -25,7 +24,7 @@ static async  getAllGenress (req, res)  {
   }
 
   //GET AN GENRES
- async getAnGenres  (req, res)  {
+ static async getAnGenres(req, res) {
     try {
       const genres = await Genres.findById(req.params.id);
       res.status(200).json(genres);
@@ -35,7 +34,7 @@ static async  getAllGenress (req, res)  {
   }
 
   //UPDATE GENRES
-static async updateGenres  (req, res)  {
+  static async updateGenres(req, res) {
     try {
       const genres = await Genres.findById(req.params.id);
       await genres.updateOne({ $set: req.body });
@@ -46,7 +45,8 @@ static async updateGenres  (req, res)  {
   }
 
   //DELETE GENRES
-static async deleteGenres  (req, res)  {
+  static async deleteGenres(req, res) {
+    
     try {
       await Genres.findByIdAndDelete(req.params.id);
       res.status(200).json("Deleted successfully!");
@@ -54,6 +54,6 @@ static async deleteGenres  (req, res)  {
       res.status(500).json(err);
     }
   }
-};
+}
 
 module.exports = genresService;

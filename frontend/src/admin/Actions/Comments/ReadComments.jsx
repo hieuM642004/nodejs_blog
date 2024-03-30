@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal';
 
-function ReadUsers() {
+function ReadComments() {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -166,4 +166,4 @@ function ReadUsers() {
     );
 }
 
-export default ReadUsers;
+export default ReadComments;

@@ -5,31 +5,32 @@ const fs = require("fs");
 
 const multer = require("multer");
 
-
 const upload = multer({ dest: "uploads/" });
 
-const keyFilePath = path.join(__dirname, "key.json")
+const keyFilePath = path.join(__dirname, "key.json");
 const auth = new google.auth.JWT({
-  keyFile: keyFilePath, 
-  scopes: "https://www.googleapis.com/auth/drive", 
+  keyFile: keyFilePath,
+  scopes: "https://www.googleapis.com/auth/drive",
 });
 
-
 const drive = google.drive({ version: "v3", auth });
-class bookService  {
+class bookService {
   //ADD A BOOK
-static async  addABook  (req, res)  {
+  static async addABook(req, res) {
     try {
-      upload.fields([{ name: 'image', maxCount: 1 }, { name: 'pdfFile', maxCount: 1 }])(req, res, async (err) => {
+      upload.fields([
+        { name: "image", maxCount: 1 },
+        { name: "pdfFile", maxCount: 1 },
+      ])(req, res, async (err) => {
         if (err) {
-          return res.status(400).json({ message: 'Upload failed', error: err });
+          return res.status(400).json({ message: "Upload failed", error: err });
         }
-  
+
         // Upload image to Google Drive
-        const imageFile = req.files['image'][0];
+        const imageFile = req.files["image"][0];
         const imageMetadata = {
           name: imageFile.filename,
-          parents: ['1TdIAHWTpH1eSejDLcJAF5nD65v_NQ38V'],
+          parents: ["1TdIAHWTpH1eSejDLcJAF5nD65v_NQ38V"],
         };
         const imageMedia = {
           mimeType: imageFile.mimetype,
@@ -38,16 +39,16 @@ static async  addABook  (req, res)  {
         const imageResponse = await drive.files.create({
           resource: imageMetadata,
           media: imageMedia,
-          fields: 'id, webViewLink',
+          fields: "id, webViewLink",
         });
         const imageUrl = imageResponse.data.webViewLink;
         const imageId = imageResponse.data.id;
-  
+
         // Upload PDF file to Google Drive
-        const pdfFile = req.files['pdfFile'][0];
+        const pdfFile = req.files["pdfFile"][0];
         const pdfMetadata = {
           name: pdfFile.filename,
-          parents: ['1TdIAHWTpH1eSejDLcJAF5nD65v_NQ38V'],
+          parents: ["1TdIAHWTpH1eSejDLcJAF5nD65v_NQ38V"],
         };
         const pdfMedia = {
           mimeType: pdfFile.mimetype,
@@ -56,11 +57,11 @@ static async  addABook  (req, res)  {
         const pdfResponse = await drive.files.create({
           resource: pdfMetadata,
           media: pdfMedia,
-          fields: 'id, webViewLink',
+          fields: "id, webViewLink",
         });
         const pdfUrl = pdfResponse.data.webViewLink;
         const pdfId = pdfResponse.data.id;
-  
+
         // Create a new book instance with uploaded image and pdf file
         const newBook = new Book({
           ...req.body,
@@ -69,17 +70,17 @@ static async  addABook  (req, res)  {
         });
         // Save the new book to database
         const savedBook = await newBook.save();
-  
+
         // If author ID is provided, update author's books array with new book ID
         if (req.body.author) {
           const author = await Author.findById(req.body.author);
           await author.updateOne({ $push: { books: savedBook._id } });
         }
-  
+
         // Delete temporary files from server
         fs.unlinkSync(imageFile.path);
         fs.unlinkSync(pdfFile.path);
-  
+
         // Return the saved book as JSON response
         res.status(200).json(savedBook);
       });
@@ -88,17 +89,14 @@ static async  addABook  (req, res)  {
     }
   }
   //GET ALL BOOKS
- static async getAllBooks  (req, res)  {
+  static async getAllBooks(req, res) {
     try {
       let query = {};
 
-    
       if (req.query.search) {
-       
-        query = { name: { $regex: new RegExp(req.query.search, 'i') } };
+        query = { name: { $regex: new RegExp(req.query.search, "i") } };
       }
-  
-    
+
       const allBooks = await Book.find(query);
       res.status(200).json(allBooks);
     } catch (err) {
@@ -107,7 +105,7 @@ static async  addABook  (req, res)  {
   }
 
   //GET A BOOK
-static async  getABook (req, res) {
+  static async getABook(req, res) {
     try {
       const book = await Book.findById(req.params.id).populate("author");
       res.status(200).json(book);
@@ -117,7 +115,7 @@ static async  getABook (req, res) {
   }
 
   //UPDATE BOOK
-static async updateBook  (req, res)  {
+  static async updateBook(req, res) {
     try {
       const book = await Book.findById(req.params.id);
       await book.updateOne({ $set: req.body });
@@ -128,7 +126,7 @@ static async updateBook  (req, res)  {
   }
 
   //DELETE BOOK
- static async deleteBook  (req, res)  {
+  static async deleteBook(req, res) {
     try {
       await Author.updateMany(
         { books: req.params.id },
@@ -140,6 +138,6 @@ static async updateBook  (req, res)  {
       res.status(500).json(err);
     }
   }
-};
+}
 
 module.exports = bookService;

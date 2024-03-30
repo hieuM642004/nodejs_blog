@@ -1,23 +1,43 @@
 const commentService = require("../services/comment");
 
-
-
 class commentController {
-  //ADD COMMENT
-  static async addComment(req, res) {
+  // ADD COMMENT
+  static async addComment(data) {
     try {
-      await commentService.addComment(req, res);
+      const comment = await commentService.addComment(data);
+      return comment;
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error('Error adding comment:', error);
+      throw new Error('Failed to add comment');
     }
   }
 
-  //GET ALL COMMENTS
-  static async getAllComments(req, res) {
+  // GET ALL COMMENTS
+  static async getAllComments() {
     try {
-      await commentService.getAllComments(req, res);
+      const comments = await commentService.getAllComments();
+      return comments;
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      console.error('Error getting all comments:', error);
+      throw new Error('Failed to retrieve comments');
+    }
+  }
+  // EDIT COMMENT
+  static async editComment(data) {
+    try {
+ await commentService.editComment(data);
+    } catch (error) {
+      console.error('Error getting all comments:', error);
+      throw new Error('Failed to retrieve comments');
+    }
+  }
+  // DELETE COMMENT
+  static async deleteComment(data) {
+    try {
+ await commentService.deleteComment(data);
+    } catch (error) {
+      console.error('Error getting all comments:', error);
+      throw new Error('Failed to retrieve comments');
     }
   }
 }

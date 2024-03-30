@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal';
 
-function ReadUsers() {
+function ReadPremiumUser() {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -15,10 +15,10 @@ function ReadUsers() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await axios.get('/user');
+                const res = await axios.get('/premium');
                 setUsers(res.data);
             } catch (error) {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching premium data:', error);
             }
         }
 
@@ -69,7 +69,7 @@ function ReadUsers() {
                             </th>
                             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
                                 <p className="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                                   Tên
+                                   Tên người dùng
                                 </p>
                             </th>
                             <th className="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
@@ -109,27 +109,27 @@ function ReadUsers() {
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                        {user&& user.username}
+                                        {user&& user.userId}
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
-                                   <img src= {user&& user.avatar} alt=""  className='w-10 h-10 rounded-full'/>
+                               
                                        
                                    
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                        {user&& user.email}
+                                        {user&& user.money}
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                        {user&& user.admin ?"Admin":"User"}
+                                        {user&& user.status}
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                        {user&& user.hasFollow.length}
+                                        {user&& user.package}
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
@@ -166,4 +166,4 @@ function ReadUsers() {
     );
 }
 
-export default ReadUsers;
+export default ReadPremiumUser;

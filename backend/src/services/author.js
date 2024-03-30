@@ -1,9 +1,8 @@
-const { Author,Book } = require("../models/book");
+const { Author, Book } = require("../models/book");
 
-
-class authorService  {
+class authorService {
   //ADD AUTHOR
- static async addAuthor  (req, res)  {
+  static async addAuthor(req, res) {
     try {
       const newAuthor = new Author(req.body);
       const savedAuthor = await newAuthor.save();
@@ -14,7 +13,7 @@ class authorService  {
   }
 
   //GET ALL AUTHORS
-static async getAllAuthors  (req, res) {
+  static async getAllAuthors(req, res) {
     try {
       const authors = await Author.find();
       res.status(200).json(authors);
@@ -24,7 +23,7 @@ static async getAllAuthors  (req, res) {
   }
 
   //GET AN AUTHOR
-static async getAnAuthor  (req, res) {
+  static async getAnAuthor(req, res) {
     try {
       const author = await Author.findById(req.params.id).populate("books");
       res.status(200).json(author);
@@ -34,7 +33,7 @@ static async getAnAuthor  (req, res) {
   }
 
   //UPDATE AUTHOR
-static async updateAuthor  (req, res) {
+  static async updateAuthor(req, res) {
     try {
       const author = await Author.findById(req.params.id);
       await author.updateOne({ $set: req.body });
@@ -45,7 +44,7 @@ static async updateAuthor  (req, res) {
   }
 
   //DELETE AUTHOR
- static async deleteAuthor (req, res) {
+  static async deleteAuthor(req, res) {
     try {
       await Book.updateMany({ author: req.params.id }, { author: null });
       await Author.findByIdAndDelete(req.params.id);
@@ -54,6 +53,6 @@ static async updateAuthor  (req, res) {
       res.status(500).json(err);
     }
   }
-};
+}
 
 module.exports = authorService;
