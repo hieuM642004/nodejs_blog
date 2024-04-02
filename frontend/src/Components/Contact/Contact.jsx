@@ -1,46 +1,101 @@
-import './contact.css';
-
+import { useState, useEffect } from 'react';
+import axios from '../../config/axiosConfig';
+import { Link } from 'react-router-dom';
 const Contact = () => {
-	
+    const [authors, setAuthors] = useState([]);
+
+    useEffect(() => {
+        const getAuthors = async () => {
+            try {
+                const resAuthors = await axios.get('/author');
+                setAuthors(resAuthors.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAuthors();
+    }, []);
+
 	return (
-	<div className=''>
-	
-
-<div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <div className="flex justify-end px-4 pt-4">
-        <button id="dropdownButton" data-dropdown-toggle="dropdown" className="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5" type="button">
-            <span className="sr-only">Open dropdown</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 3">
-                <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/>
-            </svg>
-        </button>
-      
-        <div id="dropdown" className="z-10 hidden text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-            <ul className="py-2" aria-labelledby="dropdownButton">
-            <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Edit</a>
-            </li>
-            <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Export Data</a>
-            </li>
-            <li>
-                <a href="#" className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
-            </li>
-            </ul>
-        </div>
-    </div>
-    <div className="flex flex-col items-center pb-10">
-        <img className="w-24 h-24 mb-3 rounded-full shadow-lg" src="/docs/images/people/profile-picture-3.jpg" alt="Bonnie image"/>
-        <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">Bonnie Green</h5>
-        <span className="text-sm text-gray-500 dark:text-gray-400">Visual Designer</span>
-        <div className="flex mt-4 md:mt-6">
-            <a href="#" className="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add friend</a>
-            <a href="#" className="py-2 px-4 ms-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Message</a>
-        </div>
-    </div>
-</div>
-
-	</div>
+		<div className="grid grid-cols-4 gap-4 ">
+			{authors &&
+				authors.map((author, index) => (
+					<div className="h-screen  pt-12" key={index}>
+						<div className="max-w-sm mx-auto bg-white dark:bg-gray-900 rounded-lg overflow-hidden shadow-lg">
+							<div className="border-b px-4 pb-6">
+								<div className="text-center my-4">
+									<img
+										className="h-32 w-32 rounded-full border-4 border-white dark:border-gray-800 mx-auto my-4"
+										src={author && author.image}
+										alt=""
+									/>
+									<div className="py-2">
+										<h3 className="font-bold text-2xl text-gray-800 dark:text-white mb-1">
+											{author && author.name}
+										</h3>
+							
+									</div>
+								</div>
+								<div className="flex justify-center px-2">
+									<Link to={`/author/${author._id}`}>
+									    <button className="flex-1 rounded-full border-2 border-gray-400 dark:border-gray-700 font-semibold text-black dark:text-white px-4 py-2">
+    										Xem chi tiết
+    									</button>
+									</Link>
+								</div>
+							</div>
+							<div className="px-4 py-4">
+								<div className="flex gap-2 items-center text-gray-800 dark:text-gray-300 mb-4">
+								<img width="25" height="25" src="https://img.icons8.com/ios/50/book--v1.png" alt="book--v1"/>
+									<span>
+										<strong className="text-black dark:text-white">
+											{author && author.books.length}
+										</strong>{' '}
+										Đã xuất bản
+									</span>
+								</div>
+								<div className="flex">
+									<div className="flex justify-end mr-2">
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/men/32.jpg"
+											alt=""
+										/>
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/women/31.jpg"
+											alt=""
+										/>
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/men/33.jpg"
+											alt=""
+										/>
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/women/32.jpg"
+											alt=""
+										/>
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/men/44.jpg"
+											alt=""
+										/>
+										<img
+											className="border-2 border-white dark:border-gray-800 rounded-full h-10 w-10 -mr-2"
+											src="https://randomuser.me/api/portraits/women/42.jpg"
+											alt=""
+										/>
+										<span className="flex items-center justify-center bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-white font-semibold border-2 border-gray-200 dark:border-gray-700 rounded-full h-10 w-10">
+											+999
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				))}
+		</div>
 	);
 };
 

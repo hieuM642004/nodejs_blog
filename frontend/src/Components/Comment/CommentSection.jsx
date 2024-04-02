@@ -14,6 +14,10 @@ function CommentSection() {
 	const [editingCommentId, setEditingCommentId] = useState(null);
 	const [editCommentText, setEditCommentText] = useState('');
 	const [chosenEmoji, setChosenEmoji] = useState(null);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editCommentRating, setEditCommentRating] = useState( comments.rating);
+
+
 	const [error, setError] = useState(false);
 	const { id } = useParams();
 	useEffect(() => {
@@ -69,10 +73,14 @@ function CommentSection() {
 	const handleRating = (selectedRating) => {
 		setRating(selectedRating);
 	};
-	const handleEditComment = (commentId, commentText) => {
+	
+
+	const handleEditComment = (commentId, commentText,commentRating) => {
 		console.log(commentId, commentText);
 		setEditingCommentId(commentId);
 		setEditCommentText(commentText);
+		setEditCommentRating(commentRating);
+		setIsEditing(true);
 	};
 	const handleDeleteComment = (commentId) => {
 		try {
@@ -86,12 +94,15 @@ function CommentSection() {
 		const editedCommentData = {
 			commentId: commentId,
 			text: editedCommentText,
+			rating: editCommentRating,
 		};
 
 		try {
 			socket.emit('Edit_comment', editedCommentData);
 			setEditingCommentId(null);
 			setEditCommentText('');
+			setEditCommentRating(0)
+			setIsEditing(false);
 		} catch (error) {
 			console.error('Error editing comment:', error);
 		}
@@ -100,6 +111,7 @@ function CommentSection() {
 	const handleCancelEdit = () => {
 		setEditingCommentId(null);
 		setEditCommentText('');
+		setIsEditing(false);
 	};
 	const handleSendComment = (e) => {
 		e.preventDefault();
@@ -269,18 +281,25 @@ function CommentSection() {
 							</footer>
 
 							<div className="flex items-center">
-								{[...Array(5)].map((_, index) => (
-									<svg
-										key={index}
-										className={`w-4 h-4 ${index < comment.rating ? 'text-yellow-300' : 'text-gray-500'} me-1`}
-										aria-hidden="true"
-										xmlns="http://www.w3.org/2000/svg"
-										fill="currentColor"
-										viewBox="0 0 22 20"
-									>
-										<path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-									</svg>
-								))}
+							<div className="flex items-center">
+  {[...Array(5)].map((_, index) => (
+    <svg
+      key={index}
+      className={`w-4 h-4 ${index < (isEditing && editingCommentId === comment._id ? editCommentRating : comment.rating) ? 'text-yellow-300' : 'text-gray-500'} me-1`}
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 22 20"
+      onClick={() => isEditing ? setEditCommentRating(index + 1) : handleEditComment(comment._id, comment.text, index + 1)}
+    >
+      <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+    </svg>
+  ))}
+</div>
+
+
+
+
 								<p className="ms-1 text-sm font-medium text-gray-500 dark:text-gray-400">
 									4.95
 								</p>

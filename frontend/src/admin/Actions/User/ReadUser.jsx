@@ -113,7 +113,7 @@ function ReadUsers() {
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
-                                   <img src= {user&& user.avatar} alt=""  className='w-10 h-10 rounded-full'/>
+                                   <img src= {user&& user.avatar} alt="Avatar user"  className='w-10 h-10 rounded-full'/>
                                        
                                    
                                 </td>
