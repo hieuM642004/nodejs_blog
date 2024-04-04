@@ -1,6 +1,6 @@
 //User routes
 import Author from "../Components/Author/Author"
-import Contact from "../Components/Contact/Contact"
+import Authors from "../Components/Authors/Authors"
 import DetailBook from "../Components/DetailBook/DetailBook"
 import Genres from "../Components/Genres/Genres"
 import HomePage from "../Components/Home/HomePage"
@@ -28,7 +28,7 @@ const publicRoutes=[
     {path:'/login',component:Login},
     {path:'/register',component:Register},
     {path:'/user/:id',component:Profile},
-    {path:'/contact',component:Contact},
+    {path:'/authors',component:Authors},
     {path:'/book/:id',component:DetailBook},
     {path:'/author/:id',component:Author},
     {path:'/genres/:id',component:Genres},
