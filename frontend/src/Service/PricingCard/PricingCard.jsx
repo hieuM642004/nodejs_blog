@@ -24,7 +24,7 @@ function PricingCard() {
 
 	return (
 		<section className="bg-white dark:bg-gray-900 mt-5">
-		<PaymentForm/>
+			<PaymentForm />
 			<ToastContainer />
 			<div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
 				<div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">

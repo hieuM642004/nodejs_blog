@@ -5,12 +5,11 @@ const app = express();
 var bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
+require('dotenv').config()
 const db = require("./src/config/db");
 //Config and using socket
 const { Server } = require("socket.io");
 const commentsWebSocket = require("./src/sockets/Comments/Comments");
-dotenv.config();
 //Routes
 const authorRouter = require("./src/routes/author");
 const bookRouter = require("./src/routes/book");
@@ -109,6 +108,7 @@ const io = new Server(server, { cors: {
 //     console.error("Error getting all comments:", error);
 //   }
 // });
+
 commentsWebSocket(io);
 server.listen(3001, () => {
   console.log("Server is running...");

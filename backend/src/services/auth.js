@@ -1,6 +1,6 @@
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 let refreshTokens = [];
 const path = require("path");
 const { google } = require("googleapis");
@@ -75,18 +75,20 @@ class authService {
         id: user.id,
         isAdmin: user.isAdmin,
       },
-      "Jw5Zm3Kx9LpR",
-      { expiresIn: "10d" }
+      process.env.JWT_ACCESS_KEY,
+      { expiresIn: "10d" },
+      
     );
+    
   }
-
+  
   static generateRefreshToken(user) {
     return jwt.sign(
       {
         id: user.id,
         isAdmin: user.isAdmin,
       },
-      "S4dEh9Gc6FqW",
+      process.env.JWT_REFRESH_KEY,
       { expiresIn: "365d" }
     );
   }
@@ -134,7 +136,7 @@ class authService {
     if (!refreshTokens.includes(refreshToken)) {
       return res.status(403).json("Refresh token is not valid");
     }
-    jwt.verify(refreshToken, "S4dEh9Gc6FqW", (err, user) => {
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
       if (err) {
         console.log(err);
       }

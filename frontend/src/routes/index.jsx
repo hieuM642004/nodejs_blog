@@ -10,6 +10,8 @@ import Posts from "../Components/Posts/Posts"
 import Profile from "../Components/Profile/Profile"
 import Register from "../Components/Register/Register";
 import PricingCard from "../Service/PricingCard/PricingCard"
+
+//Admin routes
 import FormAuthor from "../admin/Actions/Authors/FormAuthor"
 import ReadAuthors from "../admin/Actions/Authors/ReadAuthor"
 import FormBook from "../admin/Actions/Book/FormBook"
@@ -19,8 +21,6 @@ import ReadGenres from "../admin/Actions/Genres/ReadGenres"
 import ReadPremiumUser from "../admin/Actions/PremiumUsers/PremiumUsers"
 import FormUser from "../admin/Actions/User/FormUser"
 import ReadUsers from "../admin/Actions/User/ReadUser"
-
-//Admin routes
 import Dashboard from "../admin/Components/Dashboard/Dashboard"
 
 const publicRoutes=[

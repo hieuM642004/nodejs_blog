@@ -15,10 +15,10 @@ function PaymentForm() {
         language
       };
   
-      console.log('Request data:', requestData); // Log dữ liệu được gửi đi
+      console.log('Request data:', requestData); 
   
       const response = await axios.post('/premium/create_payment_url', requestData);
-      // Do something with the response, like redirecting to the payment URL
+     
       console.log(response);
     } catch (error) {
       console.error('Error creating payment URL:', error);
