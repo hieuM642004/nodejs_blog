@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import axios from '../../config/axiosConfig';
-import { faCrown } from '@fortawesome/free-solid-svg-icons';
+import { faCrown,faNotdef } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import getUsersFromLocalStorage from '../../utils/getDataUser';
 
-function CardsBooks() {
+function CardsBooks({ genreId }) {
 	const [books, setBooks] = useState([]);
 	const [genres, setGenres] = useState([]);
 	const [authors, setAuthors] = useState([]);
@@ -25,10 +25,14 @@ function CardsBooks() {
 					url += '&premium=false';
 				}
 				const response = await axios.get(url);
-				setBooks(response.data.book);
-				setTotalPages(response.data.totalPages);
 				const genresResponse = await axios.get('/genres');
 				const authorsResponse = await axios.get('/author');
+				if (genreId) {
+                    const filteredBooks = response.data.book.filter(book => book.genres.includes(genreId));
+                    setBooks(filteredBooks);
+                }
+				setBooks(response.data.book);
+				setTotalPages(response.data.totalPages);
 				setGenres(genresResponse.data);
 				setAuthors(authorsResponse.data);
 			} catch (error) {
@@ -36,7 +40,7 @@ function CardsBooks() {
 			}
 		};
 		fetchBooksAndGenres();
-	}, [currentPage, showPremium, showFree]);
+	}, [currentPage, showPremium, showFree,genreId]);
 
 	const handleClick = (event) => {
 		if (event.currentTarget.disabled) {
@@ -58,8 +62,8 @@ function CardsBooks() {
 	};
 
 	const togglePremium = () => {
-		setShowPremium((prevState) => !prevState);
 		setShowFree(false);
+		setShowPremium((prevState) => !prevState);
 	};
 	const showAll = () => {
 		setShowFree(false);
@@ -72,25 +76,25 @@ function CardsBooks() {
 					className="m-2 align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg border border-gray-900 text-gray-900 hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85]"
 					onClick={showAll}
 				>
-					All
+					Tất cả
 				</button>
 				<button
 					className="m-2 align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg border border-gray-900 text-gray-900 hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85]"
 					onClick={togglePremium}
 				>
-					Pre
+					Premium
 				</button>
 
 				<button
 					className="m-2 align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg border border-gray-900 text-gray-900 hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85]"
-					onClick={() => setShowFree(!showFree)}
+					onClick={() => setShowFree(true)}
 				>
-					Free
+					Miễn phí
 				</button>
 			</div>
 
 			<div className="flex flex-wrap -mx-1 lg:-mx-4">
-				{books.map((book, index) => {
+				{books.length===0? <p className='text-2xl mx-auto mt-60 mb-60'>Không sách có ở phần này</p> :  books.map((book, index) => {
 					const author = authors.find(
 						(author) => author._id === book.author,
 					);
@@ -105,11 +109,11 @@ function CardsBooks() {
 									{book.images &&
 										book.images.map(
 											(imageUrl, imageIndex) => (
-												<div key={imageIndex}>
+												<div key={imageIndex} >
 													<img
 														src={imageUrl}
 														alt={`book-image-${imageIndex}`}
-														className="block h-auto w-full"
+														className="block h-auto w-52 object-cover mx-auto"
 													/>
 												</div>
 											),
@@ -129,7 +133,7 @@ function CardsBooks() {
 									</p>
 
 									<div
-									className="mx-auto font-sans text-base antialiased font-light leading-relaxed text-inherit"
+									className="text-balance mx-auto font-sans text-base antialiased font-light leading-relaxed text-inherit"
 									dangerouslySetInnerHTML={{
 										__html:
 											book.content.length > 100
@@ -227,7 +231,7 @@ function CardsBooks() {
 							</article>
 						</div>
 					);
-				})}
+				}) }
 			</div>
 			<div className="flex justify-center mt-8">
 				<div className="flex items-center gap-4">

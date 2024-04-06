@@ -296,7 +296,7 @@ function CommentSection() {
 									</footer>
 
 									<div className="flex items-center">
-										{/* Hiển thị xếp hạng bình luận */}
+									
 										{[...Array(5)].map((_, index) => (
 											<svg
 												key={index}

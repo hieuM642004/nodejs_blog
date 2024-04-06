@@ -1,22 +1,26 @@
-import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+Link;
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from '../../config/axiosConfig';
 import PaymentForm from './Payments';
+import { Link, useNavigate } from 'react-router-dom';
 
 function PricingCard() {
+	const navigate = useNavigate();
 	const handleSignUp = async (money, packageType) => {
 		try {
 			const userData = localStorage.getItem('user');
 			const userId = JSON.parse(userData)[0];
 
-			const response = await axios.post('/premium/register', {
+			await axios.post('/premium/register', {
 				userId,
 				money,
 				packageType,
 			});
-			console.log('Đăng ký thành công!', response.data);
-			toast.success('Đăng kí thành công');
+			setTimeout(() => {
+				alert('Đăng kí thành công');
+				navigate('/');
+			}, 1000);
 		} catch (error) {
 			console.error('Đã xảy ra lỗi khi đăng ký:', error);
 		}
@@ -25,7 +29,6 @@ function PricingCard() {
 	return (
 		<section className="bg-white dark:bg-gray-900 mt-5">
 			<PaymentForm />
-			<ToastContainer />
 			<div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
 				<div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
 					<h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
