@@ -5,7 +5,7 @@ import { faCrown, faUser } from '@fortawesome/free-solid-svg-icons';
 import logo from '../../../../assets/img/open-book.png';
 import SearchBooks from './Search/Search';
 import handleLogout from '../../../Logout/Logout';
-import Notification from './Notification/Notification';
+
 
 function Navbar() {
 	const [user, setUser] = useState();
@@ -27,7 +27,6 @@ function Navbar() {
 					</span>
 				</Link>
 				<div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse ">
-					<Notification />
 					<SearchBooks />
 					{user ? (
 						<>

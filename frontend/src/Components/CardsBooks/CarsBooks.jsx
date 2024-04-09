@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import axios from '../../config/axiosConfig';
-import { faCrown,faNotdef } from '@fortawesome/free-solid-svg-icons';
+import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import getUsersFromLocalStorage from '../../utils/getDataUser';
+import Skeleton from '../Skeleton/Skeleton';
 
 function CardsBooks({ genreId }) {
 	const [books, setBooks] = useState([]);
@@ -13,7 +14,7 @@ function CardsBooks({ genreId }) {
 	const [totalPages, setTotalPages] = useState(1);
 	const [showPremium, setShowPremium] = useState(false);
 	const [showFree, setShowFree] = useState(false);
-
+	const [premiumUser, setPremiumUser] = useState(false);
 	useEffect(() => {
 		const fetchBooksAndGenres = async () => {
 			try {
@@ -27,20 +28,22 @@ function CardsBooks({ genreId }) {
 				const response = await axios.get(url);
 				const genresResponse = await axios.get('/genres');
 				const authorsResponse = await axios.get('/author');
-				if (genreId) {
-                    const filteredBooks = response.data.book.filter(book => book.genres.includes(genreId));
-                    setBooks(filteredBooks);
-                }
 				setBooks(response.data.book);
 				setTotalPages(response.data.totalPages);
 				setGenres(genresResponse.data);
 				setAuthors(authorsResponse.data);
+				if (genreId) {
+					const filteredBooks = response.data.book.filter((book) =>
+						book.genres.includes(genreId),
+					);
+					setBooks(filteredBooks);
+				}
 			} catch (error) {
 				console.error('Error fetching data:', error);
 			}
 		};
 		fetchBooksAndGenres();
-	}, [currentPage, showPremium, showFree,genreId]);
+	}, [currentPage, showPremium, showFree, genreId]);
 
 	const handleClick = (event) => {
 		if (event.currentTarget.disabled) {
@@ -48,10 +51,21 @@ function CardsBooks({ genreId }) {
 		}
 	};
 
-	const isPremiumUser = () => {
-		const premiumUser = getUsersFromLocalStorage()[4];
-		return premiumUser;
-	};
+	useEffect(() => {
+		const identifyPremium = async () => {
+			try {
+				const idUser = getUsersFromLocalStorage()[0];
+				const resUser = await axios.get(`/user/${idUser}`);
+			
+				if (resUser.data.premium === true) {
+					setPremiumUser(true);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		};
+		identifyPremium();
+	}, []);
 
 	const handleNextPage = () => {
 		setCurrentPage((prevPage) => prevPage + 1);
@@ -62,8 +76,8 @@ function CardsBooks({ genreId }) {
 	};
 
 	const togglePremium = () => {
-		setShowFree(false);
 		setShowPremium((prevState) => !prevState);
+		setShowFree(false);
 	};
 	const showAll = () => {
 		setShowFree(false);
@@ -94,144 +108,148 @@ function CardsBooks({ genreId }) {
 			</div>
 
 			<div className="flex flex-wrap -mx-1 lg:-mx-4">
-				{books.length===0? <p className='text-2xl mx-auto mt-60 mb-60'>Không sách có ở phần này</p> :  books.map((book, index) => {
-					const author = authors.find(
-						(author) => author._id === book.author,
-					);
+				{books.length === 0 ? (
+					<Skeleton />
+				) : (
+					books.map((book, index) => {
+						const author = authors.find(
+							(author) => author._id === book.author,
+						);
 
-					return (
-						<div
-							key={index}
-							className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3"
-						>
-							<article className="overflow-hidden rounded-lg shadow-lg">
-								<a href="#">
-									{book.images &&
-										book.images.map(
-											(imageUrl, imageIndex) => (
-												<div key={imageIndex} >
-													<img
-														src={imageUrl}
-														alt={`book-image-${imageIndex}`}
-														className="block h-auto w-52 object-cover mx-auto"
-													/>
-												</div>
-											),
-										)}
-								</a>
+						return (
+							<div
+								key={index}
+								className="my-1 px-1 w-full md:w-1/2 lg:my-4 lg:px-4 lg:w-1/3"
+							>
+								<article className="overflow-hidden rounded-lg shadow-lg">
+									<a href="#">
+										{book.images &&
+											book.images.map(
+												(imageUrl, imageIndex) => (
+													<div key={imageIndex}>
+														<img
+															src={imageUrl}
+															alt={`book-image-${imageIndex}`}
+															className="block h-auto w-52 object-cover mx-auto"
+														/>
+													</div>
+												),
+											)}
+									</a>
 
-								<header className="flex items-center justify-between leading-tight p-2 md:p-4">
-									<h1 className="text-lg font-semibold">
-										
+									<header className="flex items-center justify-between leading-tight p-2 md:p-4">
+										<h1 className="text-lg font-semibold">
 											{book.name}
-										
-									</h1>
-								</header>
-								<main className='p-2 md:p-4'>
-									<p className="text-grey-darker text-xs text-gray-500" >
-									{book.publishedDate}
-									</p>
+										</h1>
+									</header>
+									<main className="p-2 md:p-4">
+										<p className="text-grey-darker text-xs text-gray-500">
+											{book.publishedDate}
+										</p>
 
-									<div
-									className="text-balance mx-auto font-sans text-base antialiased font-light leading-relaxed text-inherit"
-									dangerouslySetInnerHTML={{
-										__html:
-											book.content.length > 100
-												? book.content.substring(
-														0,
-														100,
-													) + '...'
-												: book.content,
-									}}
-								></div>
-								<div className="flex">
-									{book.genres.map((genreId) => {
-										const genre = genres.find(
-											(genre) => genre._id === genreId,
-										);
-										return genre ? (
-											<Link
-												to={`/genres/${genre._id}`}
-												key={genre._id}
-											>
-												<a className="bg-gray-100 rounded-full px-3 py-1  font-semibold text-gray-600 text-xs italic ">
-													<span className="m-2">
-														#{genre.name}
-													</span>
-												</a>
-											</Link>
-										) : null;
-									})}
-								</div>
-								</main>
-								
-								<footer className="flex items-center justify-between leading-none p-2 md:p-4">
-									<a
-										className="flex items-center no-underline hover:underline text-black"
-										href="#"
-									>
-										{author ? (
-											<Link
-												to={`/author/${author._id}`}
-												key={index}
-											>
-												<div className="flex">
-													<img
-														alt="Placeholder"
-														className="block rounded-full w-8 h-8"
-														src={author.image}
-													/>
-													<span className="bg-gray-100 rounded-full px-3 py-1  font-semibold text-gray-600 text-xs italic  w-fit p-1 text-xs italic rounded-md cursor-pointer m-1">
-														<span className="ml-2 text-sm">
-															@{author.name}
-														</span>
-													</span>
-												</div>
-											</Link>
-										) : null}
-									</a>
-									<a
-										className="no-underline text-grey-darker hover:text-red-dark"
-										href="#"
-									>
-										<span className="hidden">Like</span>
-										<i className="fa fa-heart"></i>
-										<Link
-											to={
-												book.premium && !isPremiumUser()
-													? '/pricing'
-													: `/book/${book._id}`
-											}
+										<div
+											className="text-balance mx-auto font-sans text-base antialiased font-light leading-relaxed text-inherit"
+											dangerouslySetInnerHTML={{
+												__html:
+													book.content.length > 100
+														? book.content.substring(
+																0,
+																100,
+															) + '...'
+														: book.content,
+											}}
+										></div>
+										<div className="flex">
+											{book.genres.map((genreId) => {
+												const genre = genres.find(
+													(genre) =>
+														genre._id === genreId,
+												);
+												return genre ? (
+													<Link
+														to={`/genres/${genre._id}`}
+														key={genre._id}
+													>
+														<a className="bg-gray-100 rounded-full px-3 py-1  font-semibold text-gray-600 text-xs italic ">
+															<span className="m-2">
+																#{genre.name}
+															</span>
+														</a>
+													</Link>
+												) : null;
+											})}
+										</div>
+									</main>
+
+									<footer className="flex items-center justify-between leading-none p-2 md:p-4">
+										<a
+											className="flex items-center no-underline hover:underline text-black"
+											href="#"
 										>
-											<button
-												className={`align-middle select-none font-sans font-bold text-center uppercase transition-all text-xs py-3 px-6 rounded-lg bg-gray-900 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none ${
-													book.premium &&
-													!isPremiumUser()
-														? 'disabled:opacity-50 bg-yellow-400 disabled:shadow-none disabled:pointer-events-none '
-														: ''
-												}`}
-												type="button"
-												disabled={
-													book.premium &&
-													!isPremiumUser()
+											{author ? (
+												<Link
+													to={`/author/${author._id}`}
+													key={index}
+												>
+													<div className="flex">
+														<img
+															alt="Placeholder"
+															className="block rounded-full w-8 h-8"
+															src={author.image}
+														/>
+														<span className="bg-gray-100 rounded-full px-3 py-1  font-semibold text-gray-600 text-xs italic  w-fit p-1 text-xs italic rounded-md cursor-pointer m-1">
+															<span className="ml-2 text-sm">
+																@{author.name}
+															</span>
+														</span>
+													</div>
+												</Link>
+											) : null}
+										</a>
+										<a
+											className="no-underline text-grey-darker hover:text-red-dark"
+											href="#"
+										>
+											<span className="hidden">Like</span>
+											<i className="fa fa-heart"></i>
+											<Link
+												to={
+													book.premium && !premiumUser
+														? '/pricing'
+														: `/book/${book._id}`
 												}
-												onClick={handleClick}
 											>
-												{book.premium ? (
-													<FontAwesomeIcon
-														icon={faCrown}
-													/>
-												) : (
-													'Đọc thêm'
-												)}
-											</button>
-										</Link>
-									</a>
-								</footer>
-							</article>
-						</div>
-					);
-				}) }
+												<button
+													className={`align-middle select-none font-sans font-bold text-center uppercase transition-all text-xs py-3 px-6 rounded-lg bg-gray-900 text-white shadow-md shadow-gray-900/10 hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none ${
+														book.premium &&
+														!premiumUser
+															? 'disabled:opacity-50 bg-yellow-400 disabled:shadow-none disabled:pointer-events-none '
+															: ''
+													}`}
+													type="button"
+													disabled={
+														book.premium &&
+														!premiumUser
+													}
+													onClick={handleClick}
+												>
+													{book.premium &&
+													!premiumUser ? (
+														<FontAwesomeIcon
+															icon={faCrown}
+														/>
+													) : (
+														'Đọc thêm'
+													)}
+												</button>
+											</Link>
+										</a>
+									</footer>
+								</article>
+							</div>
+						);
+					})
+				)}
 			</div>
 			<div className="flex justify-center mt-8">
 				<div className="flex items-center gap-4">

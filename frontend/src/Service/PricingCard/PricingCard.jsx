@@ -1,16 +1,35 @@
-Link;
-import { ToastContainer } from 'react-toastify';
+import { useEffect, useState } from 'react';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from '../../config/axiosConfig';
 import PaymentForm from './Payments';
-import { Link, useNavigate } from 'react-router-dom';
+import getUsersFromLocalStorage from '../../utils/getDataUser';
 
 function PricingCard() {
-	const navigate = useNavigate();
-	const handleSignUp = async (money, packageType) => {
+	
+	const [userPackage, setUserPackage] = useState([]);
+
+	useEffect(() => {
+		const fetchUserPackage = async () => {
+			try {
+				const response = await axios.get('/premium');
+
+				const filterHasRegister = response.data.find(
+					(pre) => pre.userId === getUsersFromLocalStorage()[0],
+				);
+				if (filterHasRegister) {
+					setUserPackage(filterHasRegister);
+				}
+			} catch (error) {
+				console.error('Error fetching user package:', error);
+			}
+		};
+
+		fetchUserPackage();
+	}, []);
+
+	const handleRegisterPremiumAccount = async (money, packageType) => {
 		try {
-			const userData = localStorage.getItem('user');
-			const userId = JSON.parse(userData)[0];
+			const userId = getUsersFromLocalStorage()[0];
 
 			await axios.post('/premium/register', {
 				userId,
@@ -18,8 +37,9 @@ function PricingCard() {
 				packageType,
 			});
 			setTimeout(() => {
+				
 				alert('Đăng kí thành công');
-				navigate('/');
+				window.location.href='/'
 			}, 1000);
 		} catch (error) {
 			console.error('Đã xảy ra lỗi khi đăng ký:', error);
@@ -27,8 +47,9 @@ function PricingCard() {
 	};
 
 	return (
-		<section className="bg-white dark:bg-gray-900 mt-5">
-			<PaymentForm />
+		<section className="bg-white dark:bg-gray-900 ">
+			{/* <PaymentForm /> */}
+
 			<div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
 				<div className="mx-auto max-w-screen-md text-center mb-8 lg:mb-12">
 					<h2 className="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white">
@@ -73,10 +94,19 @@ function PricingCard() {
 							</li>
 						</ul>
 						<button
-							onClick={() => handleSignUp(50000, 1)}
-							className="text-white bg-dark-600  focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+							disabled={userPackage && userPackage.package === 1}
+							onClick={() =>
+								handleRegisterPremiumAccount(50000, 1)
+							}
+							className={`text-white bg-dark-600 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white dark:focus:ring-primary-900 ${
+								userPackage && userPackage.package === 1
+									? 'opacity-50 cursor-not-allowed'
+									: ''
+							}`}
 						>
-							Đăng kí
+							{userPackage && userPackage.package === 1
+								? 'Đã đăng kí'
+								: 'Đăng kí'}
 						</button>
 					</div>
 
@@ -114,10 +144,19 @@ function PricingCard() {
 							</li>
 						</ul>
 						<button
-							onClick={() => handleSignUp(150000, 3)}
-							className="text-white bg-dark-600  focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+							disabled={userPackage && userPackage.package === 3}
+							onClick={() =>
+								handleRegisterPremiumAccount(150000, 3)
+							}
+							className={`text-white bg-dark-600 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white dark:focus:ring-primary-900 ${
+								userPackage && userPackage.package === 3
+									? 'opacity-50 cursor-not-allowed'
+									: ''
+							}`}
 						>
-							Đăng kí
+							{userPackage && userPackage.package === 3
+								? 'Đã đăng kí'
+								: 'Đăng kí'}
 						</button>
 					</div>
 
@@ -155,10 +194,19 @@ function PricingCard() {
 							</li>
 						</ul>
 						<button
-							onClick={() => handleSignUp(500000, 12)}
-							className="text-white bg-dark-600  focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900"
+							disabled={userPackage && userPackage.package === 12}
+							onClick={() =>
+								handleRegisterPremiumAccount(500000, 12)
+							}
+							className={`text-white bg-dark-600 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white dark:focus:ring-primary-900 ${
+								userPackage && userPackage.package === 12
+									? 'opacity-50 cursor-not-allowed'
+									: ''
+							}`}
 						>
-							Đăng kí
+							{userPackage && userPackage.package === 12
+								? 'Đã đăng kí'
+								: 'Đăng kí'}
 						</button>
 					</div>
 				</div>

@@ -5,7 +5,7 @@ const app = express();
 var bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
-require('dotenv').config()
+require("dotenv").config();
 const db = require("./src/config/db");
 //Config and using socket
 const { Server } = require("socket.io");
@@ -39,12 +39,11 @@ app.use("/v1/premium", premiumPackage);
 app.use("/v1/comments", commentPackage);
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { 
-  origin: "*",
- }
- });
-
-
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 commentsWebSocket(io);
 server.listen(3001, () => {
